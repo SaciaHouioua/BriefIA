@@ -1,0 +1,158 @@
+
+sudo mysql --local-infile=1 
+
+
+
+
+DROP DATABASE netflix
+
+// Création de la table
+
+CREATE DATABASE netflix;
+
+USE netflix;
+
+CREATE TABLE netflix_shows (show 
+    title VARCHAR (64),
+    rating VARCHAR (9),
+    ratingLevel VARCHAR (126),
+    ratingDescription INT NOT NULL,
+    release_year INT NOT NULL,
+    user_rating_score VARCHAR (4),
+    user_rating_size INT NOT NULL
+);
+
+
+
+DESCRIBE netflix_shows;
+
+LOAD DATA LOCAL INFILE '/home/sacia/Documents/WorkSpace/BD/Netflix_Shows.csv' 
+INTO TABLE netflix_shows
+CHARACTER SET latin1
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+
+
+
+CREATE TABLE netflix_title(
+    show_id INT NOT NULL,
+    type VARCHAR (10),
+    title VARCHAR (110),
+    director VARCHAR (210),
+    cast VARCHAR (780),
+    country VARCHAR (130),
+    date_added VARCHAR (20),
+    release_year INT NOT NULL,
+    rating_apply VARCHAR (10),
+    duration_apply VARCHAR (11),
+    listed_in_apply VARCHAR (80),
+    description_apply VARCHAR (280),
+    PRIMARY KEY(show_id)
+);
+
+DESCRIBE netflix_title;
+
+
+LOAD DATA LOCAL INFILE '/home/sacia/Documents/WorkSpace/BD/netflix_titles.csv'
+INTO TABLE netflix_title 
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n'
+IGNORE 1 LINES;
+
+
+6.Afficher les titres 
+
+
+select title from netflix_title
+where show_id < 80000000;
+
+Affiche le résultat suivant :
+1346 rows in set (0.01 sec)
+
+
+7. Afficher toutes les durée des TV Show (colonne duration)
+
+SELECT duration_apply FROM netflix_title;
+
+
+
+9. Afficher tous les noms de films communs aux 2 tables (netflix_titles et netflix_shows) 
+
+SELECT *
+FROM netflix_title
+INNER JOIN netflix_shows ON netflix_title.title = netflix_shows.title;
+
+Affiche le résultat suivant :
+522 rows in set (0.01 sec)
+
+
+10. Calculer la durée totale de tous les films (Movie)S de votre table netflix_titles 
+
+SELECT COUNT(duration_apply)
+FROM netflix_title
+WHERE type = 'Movie' ;
+
+affiche le résulta suivant : 4265 
+
+
+
+11. Compter le nombre de TV Shows de votre table  ‘netflix_shows’ dont le ‘ratingLevel’ est renseigné. 
+
+SELECT COUNT(ratingLevel)
+FROM netflix_shows
+WHERE ratingLevel IS NOT NULL;
+
+
+cette requête donne le résultat suivant :1000
+
+
+12. Compter les films et TV Shows pour lesquels les noms (title) sont les mêmes sur les 2 tables et dont le ‘release year’ est supérieur à 2016. 
+
+SELECT COUNT(type)
+FROM netflix_title
+INNER JOIN netflix_shows on netflix_title.title = netflix_shows.title and netflix_title.release_year > 2016 GROUP BY type;
+
+Cette requête donne le résultat suivant :
++-------------+
+| COUNT(type) |
++-------------+
+|         260 |
+|          22 |
++-------------+
+
+13. Supprimer la colonne ‘rating’ de votre table ‘netflix_shows’ 
+
+ALTER TABLE netflix_shows
+DROP rating;
+
+Cette requête donne le résultat suivant :
+Query OK, 0 rows affected (0.16 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+En affichant DECRIBE, on bien :
+6 rows in set (0.01 sec)
+
+14. Supprimer les 100 dernières lignes de la table ‘netflix_shows’ 
+
+SELECT * 
+FROM netflix_shows
+LIMIT 100 OFFSET 900;
+
+
+DELETE FROM netflix_shows
+WHERE LIMIT 100 OFFSET 900 ;
+
+
+
+
+15. Le champs “ratingLevel” pour le TV show “Marvel's Iron Fist” de la table ‘netflix_shows’ est vide, pouvez-vous ajouter un commentaire ? 
+
+
+UPDATE netflix_shows
+SET ratingLevel = 'Ceci est un commentaire ajouté par une requête Mysql'
+WHERE netflix_shows.title = 'Marvel's Iron Fist';
+
