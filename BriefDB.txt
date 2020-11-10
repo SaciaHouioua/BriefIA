@@ -156,3 +156,59 @@ UPDATE netflix_shows
 SET ratingLevel = 'Ceci est un commentaire ajouté par une requête Mysql'
 WHERE netflix_shows.title = 'Marvel's Iron Fist';
 
+
+
+17. On se basant sur le receuil de données des deux tables
+nous allons définir le MCD 'le modèle conceptuel des donéesé avec les 2 entités suivantes  : netflix_shows et netflix_titles qui possèdent respectivement les identifiants : show_id et title_id.
+Chacune des entités est caractérisée par les attributs suivants.
+
+netflix_shows 
+	show_id
+	rating_level
+	rating_description
+	User_rating_score
+	User_rating_size
+	
+netflix_titles
+	title_id
+	type
+	title
+	director
+	cast
+	country
+	date_added
+	release_date
+	rating
+	duration
+	listed_in
+	description
+C'est deux entités sont caractérisées par l'association is_showed
+
++-------------+	  -----------	       +-------------+
+|netflix_shows| __1-N__ ( is_showed ) __0-N__|netflix_titles|
++-------------+	  -----------	       +-------------+	
+
+Modèle logique des données
+
+Les deux entités netflix_shows et netflix_titles deviennent des relations en gardant les identifiants et les attributs respectifs.
+
+l'association is_showed caractérisée par la cardinalité (N-N)
+se transforme à son tour en une relation définit avec les deux attributs suivants:
+
+is_shwed
+	show_id
+	title_id
+	
++-------------+	 +-----------+	       +-------------+
+|netflix_shows| ------> | is_showed | <-------|netflix_titles|
++-------------+	 +-----------+	       +-------------- 		
+	
+
+
+Modèle Physiques des données avec Mysql
+les identifiants deviennent des clés primaires
+attributs des champs ou colonnes
+les relations des tables.
+	
+
+
